@@ -1,24 +1,28 @@
-controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    faceDir = 0
-})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    handleShovel()
+})
+function handleShovel () {
     if (hero.tileKindAt(TileDirection.Center, assets.tile`myTile0`)) {
         tiles.setTileAt(tiles.getTileLocation(hero.x / 16, hero.y / 16), assets.tile`myTile1`)
-        tiles.setTileAt(tiles.getTileLocation(hero.x / 16 + 1, hero.y / 16), assets.tile`myTile2`)
-        tiles.setWallAt(tiles.getTileLocation(hero.x / 16 + 1, hero.y / 16), true)
+        if (faceDir == 0) {
+            tiles.setTileAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 - 1), assets.tile`myTile2`)
+            tiles.setWallAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 - 1), true)
+        } else if (faceDir == 1) {
+            tiles.setTileAt(tiles.getTileLocation(hero.x / 16 + 1, hero.y / 16), assets.tile`myTile2`)
+            tiles.setWallAt(tiles.getTileLocation(hero.x / 16 + 1, hero.y / 16), true)
+        } else if (faceDir == 2) {
+            tiles.setTileAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 + 1), assets.tile`myTile2`)
+            tiles.setWallAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 + 1), true)
+        } else if (faceDir == 3) {
+            tiles.setTileAt(tiles.getTileLocation(hero.x / 16 - 1, hero.y / 16), assets.tile`myTile2`)
+            tiles.setWallAt(tiles.getTileLocation(hero.x / 16 - 1, hero.y / 16), true)
+        } else {
+        	
+        }
     } else {
     	
     }
-})
-controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    faceDir = 3
-})
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    faceDir = 1
-})
-controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    faceDir = 2
-})
+}
 let faceDir = 0
 let hero: Sprite = null
 tiles.setTilemap(tilemap`level1`)
@@ -43,3 +47,16 @@ hero = sprites.create(img`
 faceDir = 2
 controller.moveSprite(hero)
 scene.cameraFollowSprite(hero)
+game.onUpdate(function () {
+    if (controller.dx() < 0) {
+        faceDir = 3
+    } else if (controller.dx() > 0) {
+        faceDir = 1
+    } else if (controller.dy() < 0) {
+        faceDir = 0
+    } else if (controller.dy() > 0) {
+        faceDir = 2
+    } else {
+    	
+    }
+})
