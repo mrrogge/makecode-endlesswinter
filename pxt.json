@@ -2,7 +2,9 @@
     "name": "EndlessWinter",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "xtronpro-util": "github:tsunyi/pxt-xtronpro-util#75cd706c3d9c4ce2af3cab7e8afd40c586019df8",
+        "xtronpro-rtc": "github:tsunyi/pxt-xtronpro-rtc#v0.2.2"
     },
     "files": [
         "main.blocks",

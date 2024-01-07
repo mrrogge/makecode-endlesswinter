@@ -1,24 +1,33 @@
+function fireSnowball () {
+    sprite = sprites.createProjectileFromSprite(img`
+        . . . f f . . . 
+        . . f 1 1 f . . 
+        . f 1 1 1 1 f . 
+        f 1 1 1 1 1 1 f 
+        f 1 1 1 1 1 1 f 
+        . f 1 1 1 1 f . 
+        . . f 1 1 f . . 
+        . . . f f . . . 
+        `, hero, 0, 0)
+    if (faceDir == 0) {
+        sprite.setVelocity(0, -100)
+    } else if (faceDir == 1) {
+        sprite.setVelocity(100, 0)
+    } else if (faceDir == 2) {
+        sprite.setVelocity(0, 100)
+    } else if (faceDir == 3) {
+        sprite.setVelocity(-100, 0)
+    } else {
+    	
+    }
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     handleShovel()
 })
 function handleShovel () {
     if (hero.tileKindAt(TileDirection.Center, assets.tile`myTile0`)) {
         tiles.setTileAt(tiles.getTileLocation(hero.x / 16, hero.y / 16), assets.tile`myTile1`)
-        if (faceDir == 0) {
-            tiles.setTileAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 - 1), assets.tile`myTile2`)
-            tiles.setWallAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 - 1), true)
-        } else if (faceDir == 1) {
-            tiles.setTileAt(tiles.getTileLocation(hero.x / 16 + 1, hero.y / 16), assets.tile`myTile2`)
-            tiles.setWallAt(tiles.getTileLocation(hero.x / 16 + 1, hero.y / 16), true)
-        } else if (faceDir == 2) {
-            tiles.setTileAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 + 1), assets.tile`myTile2`)
-            tiles.setWallAt(tiles.getTileLocation(hero.x / 16, hero.y / 16 + 1), true)
-        } else if (faceDir == 3) {
-            tiles.setTileAt(tiles.getTileLocation(hero.x / 16 - 1, hero.y / 16), assets.tile`myTile2`)
-            tiles.setWallAt(tiles.getTileLocation(hero.x / 16 - 1, hero.y / 16), true)
-        } else {
-        	
-        }
+        fireSnowball()
     } else {
     	
     }
@@ -34,6 +43,11 @@ function updateFaceDir () {
     } else if (controller.dy() > 0) {
         faceDir = 2
     } else {
+    	
+    }
+}
+function updateEnemies () {
+    for (let sprite2 of sprites.allOfKind(SpriteKind.Enemy)) {
     	
     }
 }
@@ -346,7 +360,15 @@ function updateHeroAnim () {
     }
     return
 }
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    otherSprite.data.life -= 1;
+sprite.destroy()
+    if (otherSprite.data.life <= 0) {
+        otherSprite.destroy(effects.ashes)
+    }
+})
 let prevFaceDir = 0
+let sprite: Sprite = null
 let faceDir = 0
 let hero: Sprite = null
 tiles.setTilemap(tilemap`level1`)
@@ -375,7 +397,7 @@ faceDir = 2
 controller.moveSprite(hero)
 scene.cameraFollowSprite(hero)
 let heroStates = ["idle", "walking"]
-let mySprite = sprites.create(img`
+let enemy = sprites.create(img`
     ........................
     ........................
     ........................
@@ -401,6 +423,10 @@ let mySprite = sprites.create(img`
     ........................
     ........................
     `, SpriteKind.Enemy)
+enemy.setBounceOnWall(true)
+enemy.setPosition(120, 120)
+enemy.setVelocity(0, 32)
+enemy.data.life = 3;
 game.onUpdate(function () {
     updateFaceDir()
     updateHeroAnim()
